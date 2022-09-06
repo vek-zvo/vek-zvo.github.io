@@ -16,23 +16,26 @@
   <meta name="author" content="JackLee_CN">
   <meta name="keywords" content="">
   
-    <meta name="description" content="卑鄙的通行证 拿上通行证卑鄙者变得高尚,   放下通行证卑鄙者变得卑鄙,   高尚者因为高尚蔑视通行证,   卑鄙者因为卑鄙拥抱通行证,   卑鄙者终究需要那张通行证,   通行证终究变得高尚且卑鄙.">
+    <meta name="description" content="前沿说明:在ffplay源码中宏的设定一般都是用于对ffplay播放参数的运行设定,其中部分枚举也是因为功能选择而定,在实际运用和开发中我们完全可以把这些宏用数据结构体来实现,同时也方便播放参数的保存和读取和修改. ffplay结构体分析: avpackt的队列节点，serial表示当前packet的序号 typedef struct MyAVPacketList &amp;#123; &#x2F;&#x2F;数据 AVPa">
 <meta property="og:type" content="article">
-<meta property="og:title" content="卑鄙的通行证">
-<meta property="og:url" content="http://example.com/2022/09/06/first/index.html">
+<meta property="og:title" content="ffplay源代码-结构体分析">
+<meta property="og:url" content="http://example.com/2022/09/06/ffplay%E6%BA%90%E4%BB%A3%E7%A0%81-%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%86%E6%9E%90/index.html">
 <meta property="og:site_name" content="Vek-Zvo">
-<meta property="og:description" content="卑鄙的通行证 拿上通行证卑鄙者变得高尚,   放下通行证卑鄙者变得卑鄙,   高尚者因为高尚蔑视通行证,   卑鄙者因为卑鄙拥抱通行证,   卑鄙者终究需要那张通行证,   通行证终究变得高尚且卑鄙.">
+<meta property="og:description" content="前沿说明:在ffplay源码中宏的设定一般都是用于对ffplay播放参数的运行设定,其中部分枚举也是因为功能选择而定,在实际运用和开发中我们完全可以把这些宏用数据结构体来实现,同时也方便播放参数的保存和读取和修改. ffplay结构体分析: avpackt的队列节点，serial表示当前packet的序号 typedef struct MyAVPacketList &amp;#123; &#x2F;&#x2F;数据 AVPa">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-09-06T11:04:19.000Z">
-<meta property="article:modified_time" content="2022-09-06T11:26:44.722Z">
+<meta property="article:published_time" content="2022-09-06T15:09:00.000Z">
+<meta property="article:modified_time" content="2022-09-06T15:14:17.113Z">
 <meta property="article:author" content="JackLee_CN">
+<meta property="article:tag" content="FFmpeg">
+<meta property="article:tag" content="ffplay源码结构体">
+<meta property="article:tag" content="ffplay源码">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>卑鄙的通行证 - Vek-Zvo</title>
+  <title>ffplay源代码-结构体分析 - Vek-Zvo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -197,7 +200,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="卑鄙的通行证"></span>
+            <span id="subtitle" data-typed-text="ffplay源代码-结构体分析"></span>
           
         </div>
 
@@ -208,7 +211,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-09-06 19:04" pubdate>
+        <time datetime="2022-09-06 23:09" pubdate>
           2022年9月6日 晚上
         </time>
       </span>
@@ -220,7 +223,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          84 字
+          6.7k 字
         
       </span>
     
@@ -231,7 +234,7 @@
         
         
         
-          1 分钟
+          56 分钟
         
       </span>
     
@@ -269,18 +272,263 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">卑鄙的通行证</h1>
+            <h1 style="display: none">ffplay源代码-结构体分析</h1>
             
             
               <div class="markdown-body">
                 
-                <p align="center">卑鄙的通行证</p>
-<p align="center">拿上通行证卑鄙者变得高尚,</p>  
-<p align="center">放下通行证卑鄙者变得卑鄙,</p>  
-<p align="center">高尚者因为高尚蔑视通行证,</p>  
-<p align="center">卑鄙者因为卑鄙拥抱通行证,</p>  
-<p align="center">卑鄙者终究需要那张通行证,</p>  
-<p align="center">通行证终究变得高尚且卑鄙.</p>  
+                <p><strong>前沿说明:在ffplay源码中宏的设定一般都是用于对ffplay播放参数的运行设定,其中部分枚举也是因为功能选择而定,在实际运用和开发中我们完全可以把这些宏用数据结构体来实现,同时也方便播放参数的保存和读取和修改.</strong></p>
+<p>ffplay结构体分析:</p>
+<p><strong>avpackt的队列节点，serial表示当前packet的序号</strong></p>
+<pre><code class="hljs">typedef struct MyAVPacketList &#123;
+//数据
+AVPacket pkt;
+//下一节点指针
+struct MyAVPacketList *next;
+/*节点的序列号，每一次seek操作后，新放入的节点序列号和队列的序列号相同，
+这样如果节点的序列号和队列的序列号不一样的话，就要丢弃不解码，只解码seek操作后的节点。
+ */
+int serial;
+&#125; MyAVPacketList;
+</code></pre>
+<hr>
+<p><strong>PacketQueue是用链表构造的队列。节点是MyAVPacketList。存放音视频、字幕的packet。</strong></p>
+<pre><code class="hljs">typedef struct PacketQueue &#123;
+//第一、最后一个节点
+MyAVPacketList *first_pkt, *last_pkt;
+//队列中packet的数量
+int nb_packets;
+//队列中所有packet所占的字节，包括packet.data。
+int size;
+//队列中所有packet的时长总和
+int64_t duration;
+//丢弃标志
+int abort_request;
+//队列的序列号，每一次seek操作，此值都会+1
+int serial;
+//队列锁
+SDL_mutex *mutex;
+//条件变量
+SDL_cond *cond;
+&#125; PacketQueue;
+</code></pre>
+<hr>
+<p><strong>音频参数</strong></p>
+<pre><code class="hljs">typedef struct AudioParams &#123;
+int freq;
+int channels;
+int64_t channel_layout;
+enum AVSampleFormat fmt;
+int frame_size;
+int bytes_per_sec;
+&#125; AudioParams;
+</code></pre>
+<hr>
+<p><strong>时钟</strong></p>
+<pre><code class="hljs">typedef struct Clock &#123;
+    double pts;             // 当前帧(待播放)显示时间戳，播放后，当前帧变成上一帧
+    //c-&gt;pts_drift = c-&gt;pts - time;
+    double pts_drift;       /* clock base minus time at which we updated the clock */
+    double last_updated;    // 当前时钟(如视频时钟)最后一次更新时间，也可称当前时钟时间
+    double speed;           // 时钟速度控制，用于控制播放速度
+    int serial;             // 播放序列，所谓播放序列就是一段连续的播放动作，一个seek操作会启动一段新的播放序列
+    int paused;             // 暂停标志
+    int *queue_serial;      /* pointer to the current packet queue serial, used for obsolete clock detection */
+&#125; Clock;
+</code></pre>
+<p><strong>set_clock_at：设置clock的基本参数; set_clock：设置clock的pts和serial；</strong><br><strong>set_clock_speed：设置speed； init_clock：初始化clock。</strong><br><strong>get_clock：获取当前的时间，如果暂停状态则返回的是pts，播放状态则返回的是pts_drift + time - (time -last_updated) * (1 - speed)(time是系统时间)；</strong><br><strong>get_master_sync_type：获取当前的同步类型； get_master_clock：获取主同步的时钟的时间；</strong><br><strong>check_external_clock_speed：检查并设置外部时钟的speed，会根据预定的参数和当前时钟的参数设置。</strong><br><strong>sync_clock_to_slave：将同步的主时钟同步到slave时钟上。</strong></p>
+<hr>
+<pre><code class="hljs">typedef struct FrameQueue &#123;
+Frame queue[FRAME_QUEUE_SIZE];  //节点数组
+int rindex; //读索引
+int windex; //写索引
+int size;   //队列中的帧的总数
+int max_size;   //可存储的最大帧数
+int keep_last;  //是否保留上一已播放的帧，音频和视频为真，字幕为假
+int rindex_shown;   //值为1，和keep_last配合使用，用于访问下一待播放的帧
+SDL_mutex *mutex;
+SDL_cond *cond;
+PacketQueue *pktq;  //帧队列对应的packet队列
+&#125; FrameQueue;
+ 
+typedef struct Frame &#123;
+    AVFrame *frame;    //帧数据
+    AVSubtitle sub;
+    int serial; //帧序列号，seek操作会改变此值，用于判断seek操作后的相关逻辑
+    double pts; //理论显示时间
+    double duration;    //此帧的播放时长
+    int64_t pos;          /* byte position of the frame in the input file */
+    int width;    //宽
+    int height;    //高
+    int format;    //格式
+    AVRational sar;
+    int uploaded;   
+    int flip_v;
+&#125; Frame;
+</code></pre>
+<p><strong>FrameQueue是用数组构造的环形队列，用于存储解码后的音视频frame.</strong></p>
+<hr>
+<pre><code class="hljs">enum &#123;
+    AV_SYNC_AUDIO_MASTER, /* default choice */
+    AV_SYNC_VIDEO_MASTER,
+    AV_SYNC_EXTERNAL_CLOCK, /* synchronize to an external clock */
+&#125;;
+</code></pre>
+<p><strong>不同的数据解码的数据不同为了保证能够按照视频的参数显示图像因此需要进行同步。既然是同步，那就会有同步的对象，向谁同步，因此就有三种同步对象音频、视频和外部时钟（ffplay默认是同步音频）。</strong></p>
+<hr>
+<pre><code class="hljs">typedef struct Decoder &#123;
+AVPacket pkt;   //要解码的packet
+PacketQueue *queue; //解码器所对应的packet队列
+AVCodecContext *avctx;
+int pkt_serial; //pkt的序列号
+int finished;   //是否解码结束的标志，结束时，finished和queue.serail相等
+int packet_pending; //send_packet特定错误，此标志为1，表示应该再发送一遍pkt。
+SDL_cond *empty_queue_cond;
+int64_t start_pts;
+AVRational start_pts_tb;
+int64_t next_pts;
+AVRational next_pts_tb;
+SDL_Thread *decoder_tid;    //解码线程id
+&#125; Decoder;
+</code></pre>
+<p><strong>包含了解码所需要的相关信息.</strong></p>
+<hr>
+<pre><code class="hljs">typedef struct VideoState &#123;
+SDL_Thread *read_tid;   //读文件线程id
+AVInputFormat *iformat; //输入格式
+/*
+ 丢弃标志，在切换音视频流和关闭流时，会置为1。
+ 当为1时，读文件线程和解码线程会退出循环或返回错误，以此来终止线程。
+*/
+int abort_request;
+int force_refresh;  //强制刷新
+int paused; //是否暂停
+int last_paused;
+int queue_attachments_req;  //是否请求attachments(对于mp3来说，就是封面图片)
+int seek_req;   //seek(前进/后退)标志，为1时表示要seek
+int seek_flags; //按字节还是时间seek
+int64_t seek_pos;   //seek目标位置
+int64_t seek_rel;   //seek增量
+int read_pause_return;
+AVFormatContext *ic;
+int realtime;
+/*
+ffplay提供了三种音视频同步的方法：视频同步到音频，音频同步到视频，音视频同步到外部时钟，
+*/
+Clock audclk;   //音频时钟
+Clock vidclk;   //视频时钟
+Clock extclk;   //外部时钟
+/*
+解码后，frame要存于队列中。
+*/
+FrameQueue pictq;   //视频帧队列
+FrameQueue subpq;   //字幕帧队列
+FrameQueue sampq;   //音频帧队列
+/*
+三种解码器，音频解码器、视频解码器、字幕解码器
+*/
+Decoder auddec;
+Decoder viddec;
+Decoder subdec;
+
+int audio_stream;   //音频流index
+int av_sync_type;   //音视频同步类型，默认视频同步到音频
+//音频时钟，值为当前音频帧的pts+当前帧所含采样点所占的时间
+double audio_clock;
+int audio_clock_serial;//音频时钟序列，seek操作会改变serial值
+double audio_diff_cum; /* used for AV difference average computation */
+double audio_diff_avg_coef;
+double audio_diff_threshold;
+int audio_diff_avg_count;
+AVStream *audio_st; //音频流
+PacketQueue audioq; //音频packet队列
+int audio_hw_buf_size;  //SDL音频缓冲区大小
+//指向待播放的音频缓冲区，后续将会拷贝进sdl进行播放。如果经过重采样，则指向audio_buf1，否则指向frame.data[0]
+uint8_t *audio_buf;
+uint8_t *audio_buf1;    //重采样的音频指针
+unsigned int audio_buf_size; //audio_buf的大小
+unsigned int audio_buf1_size;   //audio_buf1的大小
+//由于audio_buf向SDL缓冲区拷贝时，可能一次拷贝不完，所以用audio_buf_index来记录上次拷贝的位置。
+int audio_buf_index;
+//audio_buf中未拷入SDL中的数据大小，用于计算时钟值
+int audio_write_buf_size;
+int audio_volume;   //音量
+int muted;  //是否静音
+struct AudioParams audio_src;   //音频参数
+struct AudioParams audio_tgt;   //sdl支持的音频参数
+struct SwrContext *swr_ctx;
+int frame_drops_early;  //丢弃的packet数量。packet还未解码时，满足一定条件则丢弃
+int frame_drops_late;   //丢弃的frame数量。如果视频落后音频太多，则丢弃frame
+enum ShowMode &#123;
+SHOW_MODE_NONE = -1, SHOW_MODE_VIDEO = 0, SHOW_MODE_WAVES, SHOW_MODE_RDFT, SHOW_MODE_NB
+&#125; show_mode;
+int16_t sample_array[SAMPLE_ARRAY_SIZE];
+int sample_array_index;
+int last_i_start;
+RDFTContext *rdft;
+int rdft_bits;
+FFTSample *rdft_data;
+int xpos;
+double last_vis_time;
+
+SDL_Texture *vis_texture;
+SDL_Texture *sub_texture;
+SDL_Texture *vid_texture;
+
+int subtitle_stream;    //字幕流index
+AVStream *subtitle_st;  //字幕流
+PacketQueue subtitleq;  //字幕packet队列
+    
+double frame_timer; //最后一帧播放的时刻
+double frame_last_returned_time;
+double frame_last_filter_delay;
+int video_stream;   //视频流index
+AVStream *video_st; //视频流
+PacketQueue videoq; //视频packet队列
+double max_frame_duration;      // maximum duration of a frame - above this, we consider the jump a timestamp discontinuity
+struct SwsContext *img_convert_ctx;
+struct SwsContext *sub_convert_ctx;
+int eof;
+    
+char *filename;
+int width, height, xleft, ytop;
+int step;
+    
+int last_video_stream, last_audio_stream, last_subtitle_stream;
+    
+//读文件线程的线程互斥锁的条件变量
+SDL_cond *continue_read_thread;
+&#125; VideoState;
+</code></pre>
+<p><strong>VideoState结构体，管理了一些全局的播放状态。</strong></p>
+<hr>
+<pre><code class="hljs">static const struct TextureFormatEntry &#123;
+enum AVPixelFormat format;
+int texture_fmt;
+&#125; sdl_texture_format_map[] = &#123;
+&#123; AV_PIX_FMT_RGB8,           SDL_PIXELFORMAT_RGB332 &#125;,
+&#123; AV_PIX_FMT_RGB444,         SDL_PIXELFORMAT_RGB444 &#125;,
+&#123; AV_PIX_FMT_RGB555,         SDL_PIXELFORMAT_RGB555 &#125;,
+&#123; AV_PIX_FMT_BGR555,         SDL_PIXELFORMAT_BGR555 &#125;,
+&#123; AV_PIX_FMT_RGB565,         SDL_PIXELFORMAT_RGB565 &#125;,
+&#123; AV_PIX_FMT_BGR565,         SDL_PIXELFORMAT_BGR565 &#125;,
+&#123; AV_PIX_FMT_RGB24,          SDL_PIXELFORMAT_RGB24 &#125;,
+&#123; AV_PIX_FMT_BGR24,          SDL_PIXELFORMAT_BGR24 &#125;,
+&#123; AV_PIX_FMT_0RGB32,         SDL_PIXELFORMAT_RGB888 &#125;,
+&#123; AV_PIX_FMT_0BGR32,         SDL_PIXELFORMAT_BGR888 &#125;,
+&#123; AV_PIX_FMT_NE(RGB0, 0BGR), SDL_PIXELFORMAT_RGBX8888 &#125;,
+&#123; AV_PIX_FMT_NE(BGR0, 0RGB), SDL_PIXELFORMAT_BGRX8888 &#125;,
+&#123; AV_PIX_FMT_RGB32,          SDL_PIXELFORMAT_ARGB8888 &#125;,
+&#123; AV_PIX_FMT_RGB32_1,        SDL_PIXELFORMAT_RGBA8888 &#125;,
+&#123; AV_PIX_FMT_BGR32,          SDL_PIXELFORMAT_ABGR8888 &#125;,
+&#123; AV_PIX_FMT_BGR32_1,        SDL_PIXELFORMAT_BGRA8888 &#125;,
+&#123; AV_PIX_FMT_YUV420P,        SDL_PIXELFORMAT_IYUV &#125;,
+&#123; AV_PIX_FMT_YUYV422,        SDL_PIXELFORMAT_YUY2 &#125;,
+&#123; AV_PIX_FMT_UYVY422,        SDL_PIXELFORMAT_UYVY &#125;,
+&#123; AV_PIX_FMT_NONE,           SDL_PIXELFORMAT_UNKNOWN &#125;,
+&#125;;
+</code></pre>
+<p><strong>ffmpeg和SDL图像纹理格式映射</strong></p>
 
                 
               </div>
@@ -289,6 +537,38 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ffplay%E6%BA%90%E7%A0%81/" class="category-chain-item">ffplay源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/FFmpeg/">#FFmpeg</a>
+      
+        <a href="/tags/ffplay%E6%BA%90%E7%A0%81%E7%BB%93%E6%9E%84%E4%BD%93/">#ffplay源码结构体</a>
+      
+        <a href="/tags/ffplay%E6%BA%90%E7%A0%81/">#ffplay源码</a>
+      
+    </div>
   
 </div>
 
@@ -298,8 +578,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>卑鄙的通行证</div>
-      <div>http://example.com/2022/09/06/first/</div>
+      <div>ffplay源代码-结构体分析</div>
+      <div>http://example.com/2022/09/06/ffplay源代码-结构体分析/</div>
     </div>
     <div class="license-meta">
       
@@ -341,15 +621,15 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/09/06/ffplay%E6%BA%90%E4%BB%A3%E7%A0%81-%E7%BB%93%E6%9E%84%E4%BD%93%E5%88%86%E6%9E%90/" title="ffplay源代码-结构体分析">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">ffplay源代码-结构体分析</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2022/09/06/first/" title="卑鄙的通行证">
+                        <span class="hidden-mobile">卑鄙的通行证</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
